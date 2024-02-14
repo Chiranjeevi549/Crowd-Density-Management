@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>My Home Page</title>
+    <style>
+      /* Style the navigation bar */
+      ul {
+        list-style-type: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        background-color: #333;
+      }
+      
+      /* Style the links in the navigation tabs */
+      li {
+        float: left;
+      }
+      
+      li a {
+        display: block;
+        color: white;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+      }
+      
+      .active {
+        background-color: #4CAF50;
+      }
+      
+      /* Center the button */
+      .button-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100%;
+      }
+      
+      /* Style the button */
+      .button {
+        display: inline-block;
+        background-color: #4CAF50;
+        color: white;
+        padding: 14px 20px;
+        margin-top: 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background-color 0.3s ease;
+      }
+      
+      .button:hover {
+        background-color: #3e8e41;
+      }
+      
+      /* Style the heading */
+      h1 {
+        margin-top: 50px;
+        text-align: center;
+      }      
+      p {
+        color: maroon;
+        
+        margin: 20px;
+        text-align: center;
+      }
+
+    </style>
+  </head>
+  <body style="background-color: silver">
+    <h1>For detecting the Social distance click detect</h1>
+    <div class="button-container">
+      <button class="button" onclick="startScript()">Detect</button>
+      <button class="button" style="margin-left: 50px;" onclick="stopScript()">Stop</button>
+    </div>
+    <div>
+      <p><strong>
+        Note :
+      </strong>
+      </p >
+      <p><strong>In the simulation if the border box is in green color then they are maintaining social distance.
+      </strong> </p>
+      <p><strong>If the border box is in red color then they are not following social distance then the violation will be added</strong></p> 
+      <p>
+        <strong>
+        Then the output sound will be given which says "Please Maintain Social Distance!"
+      </strong>
+      </p>
+    </div>
+    <script>
+      function startScript() {
+        fetch('/detect')
+          .then(response => response.text())
+          .then(data => console.log(data))
+          .catch(error => console.log(error));
+      }
+      function stopScript() {
+        fetch('/detect/stop')
+          .then(response => response.text())
+          .then(data => console.log(data))
+          .catch(error => console.log(error));
+      }
+    </script>
+  </body>
+</html>
