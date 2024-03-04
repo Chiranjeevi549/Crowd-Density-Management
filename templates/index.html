@@ -1,107 +1,137 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
-    <title>My Home Page</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Social Distance</title>
     <style>
-      /* Style the navigation bar */
-      ul {
-        list-style-type: none;
+      body {
+        background-image: url("{{ url_for('static', filename='63527.jpg') }}");
+        background-size: cover;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
         margin: 0;
         padding: 0;
-        overflow: hidden;
-        background-color: #333;
       }
-      
-      /* Style the links in the navigation tabs */
-      li {
-        float: left;
-      }
-      
-      li a {
-        display: block;
-        color: white;
+
+      .container {
+        max-width: 700px;
+        margin: 20px auto;
+        padding: 20px;
+        background-color: #ecf0f1;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
+        position: relative;
+        overflow: hidden;
+        background-image: linear-gradient(to right, #3498db, #2ecc71);
       }
-      
-      .active {
-        background-color: #4CAF50;
+
+      .heading h1 {
+        color: #fff;
+        text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
       }
-      
-      /* Center the button */
-      .button-container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100%;
+
+      .heading p {
+        color: #ecf0f1;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
       }
-      
-      /* Style the button */
-      .button {
-        display: inline-block;
-        background-color: #4CAF50;
-        color: white;
-        padding: 14px 20px;
+
+      .file-upload,
+      .camera,
+      .view-analysis {
         margin-top: 20px;
+      }
+
+      .file-upload label,
+      .camera h2 {
+        color: #fff;
+      }
+
+      .btn-icon i {
+        margin-right: 5px;
+      }
+
+      .file-upload button,
+      .camera button,
+      #viewAnalysisBtn {
+        background: linear-gradient(to right, #e74c3c, #c0392b);
+        color: #fff;
+        padding: 10px 20px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 16px;
-        transition: background-color 0.3s ease;
-      }
-      
-      .button:hover {
-        background-color: #3e8e41;
-      }
-      
-      /* Style the heading */
-      h1 {
-        margin-top: 50px;
-        text-align: center;
-      }      
-      p {
-        color: maroon;
-        
-        margin: 20px;
-        text-align: center;
+        transition: background 0.3s ease;
+        margin: 5px;
       }
 
+      .file-upload button:hover,
+      .camera button:hover,
+      #viewAnalysisBtn:hover {
+        background: linear-gradient(to right, #c0392b, #a52820);
+      }
+      .about {
+        margin-top: 20px;
+        background-color: #3498db;
+        color: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .about h2 {
+        color: #fff;
+        text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+      }
     </style>
   </head>
-  <body style="background-color: silver">
-    <h1>For detecting the Social distance click detect</h1>
-    <div class="button-container">
-      <button class="button" onclick="startScript()">Detect</button>
-      <button class="button" style="margin-left: 50px;" onclick="stopScript()">Stop</button>
+  <body>
+    <div class="container">
+      <div class="heading">
+        <h1>Leveraging Smart Sensing for Proximity Analysis</h1>
+        <p>Ensuring safety through advanced technology</p>
+      </div>
+      <div class="about">
+        <h2>About Us</h2>
+        <p>
+          To ensure safety among the public we created this website.This website
+          will detect the number of violations and analyze the data and give
+          violations analysis graph.
+        </p>
+      </div>
+      <div class="file-upload">
+        <form method="POST" id="form" action="" enctype="multipart/form-data">
+          <label for="fileInput" class="btn-icon"
+            ><i class="fas fa-cloud-upload-alt"></i> Upload Video</label
+          >
+          <input type="file" id="fileInput" name="video" />
+          <button id="submitBtn" type="submit">Submit</button>
+        </form>
+        <form action="/dt1/stop" method="POST">
+          <button id="stopBtn" type="submit">Stop</button>
+        </form>
+      </div>
+
+      <div class="camera">
+        <h2>Live Camera</h2>
+        <form action="/app.py/myfunc" method="POST">
+          <button id="cameraBtn" class="btn-icon" type="submit">
+            <i class="fas fa-camera"></i> Start Camera
+          </button>
+        </form>
+        <form action="/dt/stop" method="POST">
+          <button id="stopCameraBtn" type="submit">Stop Camera</button>
+        </form>
+      </div>
+
+      <div class="view-analysis">
+        <a
+          href="line_graph.png"
+          download="downloaded_image.jpg"
+          style="color: #fff"
+        >
+          <button id="viewAnalysisBtn">Download Analysis</button>
+        </a>
+      </div>
     </div>
-    <div>
-      <p><strong>
-        Note :
-      </strong>
-      </p >
-      <p><strong>In the simulation if the border box is in green color then they are maintaining social distance.
-      </strong> </p>
-      <p><strong>If the border box is in red color then they are not following social distance then the violation will be added</strong></p> 
-      <p>
-        <strong>
-        Then the output sound will be given which says "Please Maintain Social Distance!"
-      </strong>
-      </p>
-    </div>
-    <script>
-      function startScript() {
-        fetch('/detect')
-          .then(response => response.text())
-          .then(data => console.log(data))
-          .catch(error => console.log(error));
-      }
-      function stopScript() {
-        fetch('/detect/stop')
-          .then(response => response.text())
-          .then(data => console.log(data))
-          .catch(error => console.log(error));
-      }
-    </script>
   </body>
 </html>
