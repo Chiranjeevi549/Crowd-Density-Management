@@ -3,13 +3,16 @@ import numpy as np
 import random
 import os
 import time
+from datetime import datetime
+import matplotlib.pyplot as plt
 speak = True
 net = cv2.dnn.readNet("yolov3.weights", "yolov3.cfg")
 net.setPreferableBackend(cv2.dnn.DNN_BACKEND_CUDA)
 net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
-distance_thres = 300
+distance_thres = 170
 
-cap = cv2.VideoCapture(0)
+cap = cv2.VideoCapture(1)
+current_time = datetime.now().strftime('%H:%M:%S')
 
 
 def dist(pt1,pt2):
@@ -21,14 +24,12 @@ def dist(pt1,pt2):
 layer_names = net.getLayerNames()
 output_layers = [layer_names[i - 1] for i in net.getUnconnectedOutLayers()]
 print('Output layers',output_layers)
- 
+
 
 _,frame = cap.read()
 
-fourcc = cv2.VideoWriter_fourcc(*"MJPG")
-writer = cv2.VideoWriter('output.avi', fourcc, 30,(frame.shape[1], frame.shape[0]), True)
 
-
+v_array=[]
 ret = True
 while ret:
 
@@ -40,7 +41,7 @@ while ret:
 
         net.setInput(blob)
         outs = net.forward(output_layers)
-
+        print("out ",outs)
         confidences = []
         boxes = []
         
@@ -91,9 +92,8 @@ while ret:
                 color = (0,255,0)
             cv2.rectangle(img,(x,y),(x+w,y+h),color,2)
             cv2.circle(img,(x+w//2,y+h//2),2,(0,0,255),2)
-
+        v_array.append(v)
         cv2.putText(img,'No of Violations : '+str(v),(15,frame.shape[0]-10),cv2.FONT_HERSHEY_SIMPLEX,1,(0,126,255),2)
-        writer.write(img)
         cv2.imshow("Image", img)
         
         if v > 0:
@@ -103,6 +103,12 @@ while ret:
             
         else :
             speak = True
+        x = range(1, len(v_array) + 1)
+        plt.plot(x, v_array, linestyle='-')
+        plt.xlabel('Time')
+        plt.ylabel('No of violations')
+        plt.title(f'Time Analysis on {current_time} - {datetime.now().strftime("%Y-%m-%d")}')
+        plt.savefig('templates/line_graph.png')
     if cv2.waitKey(1) == 27:
         break
 

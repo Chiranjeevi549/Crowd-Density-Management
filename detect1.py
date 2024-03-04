@@ -4,6 +4,9 @@ import random
 import os
 from PIL import Image
 import time
+import matplotlib.pyplot as plt
+from datetime import datetime
+
 speak = True
 speak1 = True
 speak2 = True
@@ -13,8 +16,8 @@ net.setPreferableTarget(cv2.dnn.DNN_TARGET_CUDA)
 
 distance_thres = 50
 
-cap = cv2.VideoCapture('data/humans.mp4')
-
+cap = cv2.VideoCapture('video.mp4')
+v_array=[]
 def dist(pt1,pt2):
     try:
         return ((pt1[0]-pt2[0])**2 + (pt1[1]-pt2[1])**2)**0.5
@@ -30,10 +33,10 @@ _,frame = cap.read()
 fourcc = cv2.VideoWriter_fourcc(*"MJPG")
 writer = cv2.VideoWriter('output.avi', fourcc, 30,(frame.shape[1], frame.shape[0]), True)
 
+current_time = datetime.now().strftime('%H:%M:%S')
 
 ret = True
 while ret:
-
     ret, img = cap.read()
     if ret:
         height, width = img.shape[:2]
@@ -45,7 +48,7 @@ while ret:
 
         confidences = []
         boxes = []
-        
+            
         for out in outs:
             for detection in out:
                 scores = detection[5:]
@@ -82,7 +85,7 @@ while ret:
                 if dist(person_centres[i],person_centres[j]) <= distance_thres:
                     violate.add(tuple(persons[i]))
                     violate.add(tuple(persons[j]))
-        
+            
         v = 0
         for (x,y,w,h) in persons:
             if (x,y,w,h) in violate:
@@ -92,7 +95,7 @@ while ret:
                 color = (0,255,0)
             cv2.rectangle(img,(x,y),(x+w,y+h),color,2)
             cv2.circle(img,(x+w//2,y+h//2),2,(0,0,255),2)
-
+        v_array.append(v)
         cv2.putText(img,'No of Violations : '+str(v),(15,frame.shape[0]-10),cv2.FONT_HERSHEY_SIMPLEX,1,(0,126,255),2)
         writer.write(img)
         cv2.imshow("Image", img)
@@ -114,8 +117,24 @@ while ret:
                 speak1 = True
         else :
             speak = True
+        print(v_array)
+        x = range(1, len(v_array) + 1)
+# Plotting the line graph
+        plt.plot(x, v_array, linestyle='-')
+
+# Adding labels and title
+        plt.xlabel('Time')
+        plt.ylabel('No of violations')
+        plt.title(f'Time Analysis on {current_time} - {datetime.now().strftime("%Y-%m-%d")}')
+
+# Display the graph
+        plt.savefig('templates/line_graph.png')
+
     if cv2.waitKey(1) == 27:
         break
 
 cap.release()
 cv2.destroyAllWindows()
+
+
+
